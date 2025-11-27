@@ -1,15 +1,8 @@
 from models.audio_model import AudioConfig
+from algorithms.humanizer import autotune_with_humanize
+from algorithms.pitchshift import pitch_shift_audio
 
 async def process_audio(data: AudioConfig) -> str:
-    """
-    Audio processing function that applies autotune and other effects.
     
-    Args:
-        file_path (str): Path to the uploaded audio file.
-        volume (int): Volume adjustment parameter.
-        and more config parameters...
-        
-    Returns:
-        str: Path to the processed audio file.
-    """
+    pitch_shift_audio(data.file_path, "../uploads/processed/test.wav", 5)
     return data.file_path
