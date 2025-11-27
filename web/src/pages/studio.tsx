@@ -1,4 +1,5 @@
 import { AudioControls } from "@/components/audio-controls";
+import { AudioOutputs } from "@/components/audio-outputs";
 import { AudioRecorder } from "@/components/audio-recorder";
 
 const Studio = () => {
@@ -15,8 +16,11 @@ const Studio = () => {
           </p>
         </div>
 
-        <AudioRecorder />
-        <AudioControls />
+        <div className="flex flex-col gap-4">
+          <AudioRecorder />
+          <AudioControls />
+        </div>
+        <AudioOutputs />
       </div>
     </div>
   );
