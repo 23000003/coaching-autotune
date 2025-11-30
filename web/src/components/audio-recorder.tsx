@@ -1,19 +1,27 @@
 import { Play, Pause, Circle, RotateCcw, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 
-export const AudioRecorder = () => {
-  const {
-    isRecording,
-    isPaused,
-    recordingTime,
-    volumeLevel,
-    startRecording,
-    stopRecording,
-    togglePause,
-    resetRecording,
-  } = useAudioRecorder();
+interface AudioRecorderProps {
+  isRecording: boolean;
+  isPaused: boolean;
+  recordingTime: string;
+  volumeLevel: number;
+  onStartRecording: () => void;
+  onStopRecording: () => void;
+  onTogglePause: () => void;
+  onResetRecording: () => void;
+}
 
+export const AudioRecorder = ({
+  isRecording,
+  isPaused,
+  recordingTime,
+  volumeLevel,
+  onStartRecording,
+  onStopRecording,
+  onTogglePause,
+  onResetRecording,
+}: AudioRecorderProps) => {
   return (
     <div className="w-full max-w-5xl mx-auto space-y-8">
       {/* Waveform Display */}
@@ -44,10 +52,6 @@ export const AudioRecorder = () => {
                 );
               })}
             </div>
-            {/* Recording indicator */}
-            {isRecording && !isPaused && (
-              <div className="absolute left-0 right-0 top-0 bottom-0 bg-primary/5" />
-            )}
           </div>
 
           {/* Transport Controls */}
@@ -56,7 +60,7 @@ export const AudioRecorder = () => {
               variant="outline"
               size="icon"
               className="h-12 w-12 rounded-full border-border hover:border-primary hover:bg-primary/10"
-              onClick={resetRecording}
+              onClick={onResetRecording}
               disabled={!isRecording}
             >
               <RotateCcw className="h-5 w-5" />
@@ -66,7 +70,7 @@ export const AudioRecorder = () => {
               <Button
                 size="icon"
                 className="h-16 w-16 rounded-full bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-lg shadow-destructive/20"
-                onClick={startRecording}
+                onClick={onStartRecording}
               >
                 <Circle className="h-7 w-7 fill-current" />
               </Button>
@@ -75,7 +79,7 @@ export const AudioRecorder = () => {
                 <Button
                   size="icon"
                   className="h-16 w-16 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
-                  onClick={togglePause}
+                  onClick={onTogglePause}
                 >
                   {isPaused ? (
                     <Play className="h-7 w-7 ml-1" />
@@ -87,7 +91,7 @@ export const AudioRecorder = () => {
                   variant="outline"
                   size="icon"
                   className="h-12 w-12 rounded-full border-border hover:border-destructive hover:bg-destructive/10"
-                  onClick={stopRecording}
+                  onClick={onStopRecording}
                 >
                   <Square className="h-5 w-5" />
                 </Button>
