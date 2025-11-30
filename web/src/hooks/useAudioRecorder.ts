@@ -2,8 +2,9 @@ import { toastr } from "@/utils/toast";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { convertToWav } from "@/utils/convert-to-wav";
 import { AudioService } from "@/services/audio.service";
+import { UploadAudio } from "@/types/audio-config";
 
-export const useAudioRecorder = () => {
+export const useAudioRecorder = (handleUpload: (wavBlob: Blob) => void) => {
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -23,11 +24,11 @@ export const useAudioRecorder = () => {
   const startTimeRef = useRef<number>(0);
   const pausedTimeRef = useRef<number>(0);
 
-  const updateVolumeLevel = useCallback(function updateVolumeLevelInternal() {
+  const updateVolumeLevel = useCallback(() => {
     if (!analyserRef.current || !dataArrayRef.current) return;
 
     analyserRef.current.getByteTimeDomainData(dataArrayRef.current);
-    
+
     let sum = 0;
     for (let i = 0; i < dataArrayRef.current.length; i++) {
       sum += Math.abs(dataArrayRef.current[i] - 128);
@@ -83,9 +84,7 @@ export const useAudioRecorder = () => {
         const wavBlob = await convertToWav(webmBlob);
 
         try {
-          const fileUrl = await AudioService.sendAudioFile(wavBlob, { volume: 10 }, "kenny");
-          toastr.success("Audio uploaded!");
-          console.log("WAV File URL:", fileUrl);
+          handleUpload(wavBlob);
         } catch (err) {
           console.error(err);
           toastr.error("Failed to upload audio");
