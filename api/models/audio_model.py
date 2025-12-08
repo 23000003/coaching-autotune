@@ -9,10 +9,10 @@ class AudioConfig(BaseModel):
   username: str
   file_path: str
   volume: int
-  flex_tune: float       # 0–1
-  retune_speed: float    # 0–1
-  humanize: float        # 0–1
-  vibrato: float          # 0–1
+  flex_tune: float      
+  retune_speed: float    
+  humanize: float       
+  vibrato: float        
 
 class MetadataInfo(BaseModel):
   filename: str

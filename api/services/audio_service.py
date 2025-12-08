@@ -2,13 +2,11 @@ import os
 import glob
 import base64
 import numpy as np
-import soundfile as sf
+import librosa
 from utils.logger import logger
 from typing import List
-from typing import Tuple
 from pipeline.index import process_voice_autotune_pipeline
 from models.audio_model import AllAudioFilesResponse, AudioConfig, MetadataInfo
-from fastapi.responses import FileResponse
 from utils.upload_audio import upload_processed_audio_file
 
 
@@ -74,20 +72,8 @@ async def process_audio(data: AudioConfig) -> str:
         str: message
     """
     
-    audio, sr = sf.read(data.file_path)
-
-    # Ensure mono
-    if len(audio.shape) > 1:
-        audio = np.mean(audio, axis=1).astype(np.float32)
-
-    # Normalize audio amplitude to [-1,1]
-    audio = audio.astype(np.float32)
+    audio, sr = librosa.load(data.file_path, sr=None, mono=True)
     
-    max_val = np.max(np.abs(audio))
-    
-    if max_val > 0:
-        audio /= max_val
-        
     processed_audio_bytes = process_voice_autotune_pipeline(
         meta=(audio, sr),
         values=data

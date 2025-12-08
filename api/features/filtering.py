@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.signal import  lfilter, butter
 
 def apply_filtering(audio: np.ndarray, sr: int) -> np.ndarray:
     """
@@ -7,4 +8,8 @@ def apply_filtering(audio: np.ndarray, sr: int) -> np.ndarray:
     Returns:
         filtered audio array
     """
-    return audio  # mock pass-through
+    nyquist = sr / 2
+    cutoff = 80 / nyquist
+    b, a = butter(2, cutoff, btype='high')
+    filtered_audio = lfilter(b, a, audio)
+    return filtered_audio
