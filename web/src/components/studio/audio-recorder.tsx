@@ -6,6 +6,7 @@ interface AudioRecorderProps {
   isPaused: boolean;
   recordingTime: string;
   volumeLevel: number;
+  isUploading: boolean;
   onStartRecording: () => void;
   onStopRecording: () => void;
   onTogglePause: () => void;
@@ -15,6 +16,7 @@ interface AudioRecorderProps {
 export const AudioRecorder = ({
   isRecording,
   isPaused,
+  isUploading,
   recordingTime,
   volumeLevel,
   onStartRecording,
@@ -71,8 +73,13 @@ export const AudioRecorder = ({
                 size="icon"
                 className="h-16 w-16 rounded-full bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-lg shadow-destructive/20"
                 onClick={onStartRecording}
+                disabled={isUploading}
               >
-                <Circle className="h-7 w-7 fill-current" />
+                {isUploading ? (
+                  <RotateCcw className="h-7 w-7 fill-current animate-spin" />
+                ) : (
+                  <Circle className="h-7 w-7 fill-current" />
+                )}
               </Button>
             ) : (
               <>

@@ -18,12 +18,19 @@ export const AudioService = {
     const formData = new FormData();
 
     formData.append("file", data.file, "recording.wav");
-    formData.append("volume", data.volume.toString());
     formData.append("username", data.username);
+
     formData.append("retune_speed", data.retune_speed.toString());
-    formData.append("flex_tune", data.flex_tune.toString());
     formData.append("humanize", data.humanize.toString());
-    formData.append("vibrato", data.vibrato.toString());
+    formData.append("pitch_shift", data.pitch_shift.toString());
+    formData.append("noise_filtering_enabled", data.noise_filtering_enabled ? "true" : "false");
+
+    formData.append("fx_enabled", data.fx_enabled ? "true" : "false");
+    formData.append("air", data.air.toString());
+    formData.append("compression", data.compression.toString());
+    formData.append("chorus", data.chorus.toString());
+    formData.append("reverb", data.reverb.toString());
+    formData.append("delay", data.delay.toString());
 
     const res = await api.post<ApiResponse<{ file_url: string }>>(`${BASE_PATH}/upload_audio`, formData, {
       headers: {

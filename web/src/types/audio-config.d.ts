@@ -4,11 +4,18 @@ export type UploadAudio = {
 } & AudioConfig;
 
 export type AudioConfig = {
-  volume: number;
-  flex_tune: number;
-  retune_speed: number;
-  humanize: number;
-  vibrato: number;
+  retune_speed: number; // 0 - 1.0
+  humanize: number; // 0 - 40
+  pitch_shift: number; // semitones -12 to +12
+  noise_filtering_enabled: boolean;
+
+  // FX
+  fx_enabled: boolean;
+  air: number;        // High-shelf gain (dB)
+  compression: number; // Vocal tightness
+  chorus: number;     // Width
+  reverb: number;     // Space
+  delay: number;      // Echo
 };
 
 // Base64-encoded WAV file data

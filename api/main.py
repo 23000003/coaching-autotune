@@ -1,6 +1,7 @@
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.audio_router import router as audio_router
+from routers.studio_router import router as studio_router
 
 app = FastAPI()
 
@@ -17,6 +18,7 @@ api = APIRouter(prefix="/api")
 def configure_routers(app=app):
     api.get("/health-check")(lambda: {"Hello": "World"})
     api.include_router(audio_router)
+    api.include_router(studio_router)
 
     app.include_router(api)
 

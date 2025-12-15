@@ -5,7 +5,7 @@ import numpy as np
 import librosa
 from utils.logger import logger
 from typing import List
-from pipeline.index import process_voice_autotune_pipeline
+from pipeline.index import start_dsp_pipeline
 from models.audio_model import AllAudioFilesResponse, AudioConfig, MetadataInfo
 from utils.upload_audio import upload_processed_audio_file
 
@@ -74,7 +74,7 @@ async def process_audio(data: AudioConfig) -> str:
     
     audio, sr = librosa.load(data.file_path, sr=None, mono=True)
     
-    processed_audio_bytes = process_voice_autotune_pipeline(
+    processed_audio_bytes = start_dsp_pipeline(
         meta=(audio, sr),
         values=data
     )

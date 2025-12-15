@@ -8,11 +8,18 @@ class AudioConfig(BaseModel):
   # add more config params
   username: str
   file_path: str
-  volume: int
-  flex_tune: float      
-  retune_speed: float    
-  humanize: float       
-  vibrato: float        
+  retune_speed: float
+  humanize: float
+  pitch_shift: float
+  noise_filtering_enabled: bool
+  
+  fx_enabled: bool
+  air: float
+  compression: float
+  chorus: float
+  reverb: float
+  delay: float
+   
 
 class MetadataInfo(BaseModel):
   filename: str

@@ -1,19 +1,13 @@
 
 export enum SessionRole {
-  USER = "USER",
+  LEARNER = "LEARNER",
   COACH = "COACH",
+  SYSTEM = "SYSTEM",
 }
 
 // Stored in session storage to keep track of their sessions
-export type SessionStorage = {
+export type Session = {
   sessionId: string;
-  username: string;
   role: SessionRole;
 };
 
-// Displays all room's and their sessions
-// isFull indicates if the room already has both USER and COACH
-export type RoomSessions = {
-  isFull: boolean;
-  sessions: SessionStorage[];
-}

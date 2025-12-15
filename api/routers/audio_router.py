@@ -31,23 +31,37 @@ async def get_all_audio_files(username: str):
 async def upload_audio(
   file: UploadFile = File(...),
   username: str = Form(...),
-  volume: int = Form(...),
-  retune_speed: int = Form(...),
-  flex_tune: int = Form(...),
-  humanize: int = Form(...),
-  vibrato: int = Form(...)
+  
+  retune_speed: float = Form(...),
+  humanize: float = Form(...),
+  pitch_shift: float = Form(...),
+  noise_filtering_enabled: str = Form(...),
+  
+  fx_enabled: str = Form(...),
+  air: float = Form(...),
+  compression: float = Form(...),
+  chorus: float = Form(...),
+  reverb: float = Form(...),
+  delay: float = Form(...)
 ):
   try:
     file_path = upload_raw_audio_file(username, file)
       
     data = AudioConfig(
       username=username,
-      file_path=file_path, 
-      volume=volume,
-      flex_tune=flex_tune,
+      file_path=file_path,
+      
       retune_speed=retune_speed,
       humanize=humanize,
-      vibrato=vibrato
+      pitch_shift=pitch_shift,
+      noise_filtering_enabled=noise_filtering_enabled.lower() == "true",
+      
+      fx_enabled=fx_enabled.lower() == "true",
+      air=air,
+      compression=compression,
+      chorus=chorus,
+      reverb=reverb,
+      delay=delay
     )
     
     processed_file_path = await process_audio(data)
