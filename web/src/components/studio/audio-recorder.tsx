@@ -1,5 +1,6 @@
 import { Play, Pause, Circle, RotateCcw, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SessionRole } from "@/types/session.d";
 
 interface AudioRecorderProps {
   isRecording: boolean;
@@ -7,6 +8,7 @@ interface AudioRecorderProps {
   recordingTime: string;
   volumeLevel: number;
   isUploading: boolean;
+  role: SessionRole;
   onStartRecording: () => void;
   onStopRecording: () => void;
   onTogglePause: () => void;
@@ -23,6 +25,7 @@ export const AudioRecorder = ({
   onStopRecording,
   onTogglePause,
   onResetRecording,
+  role
 }: AudioRecorderProps) => {
   return (
     <div className="w-full max-w-5xl mx-auto space-y-8">
@@ -73,7 +76,7 @@ export const AudioRecorder = ({
                 size="icon"
                 className="h-16 w-16 rounded-full bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-lg shadow-destructive/20"
                 onClick={onStartRecording}
-                disabled={isUploading}
+                disabled={isUploading || role === SessionRole.COACH}
               >
                 {isUploading ? (
                   <RotateCcw className="h-7 w-7 fill-current animate-spin" />

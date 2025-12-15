@@ -7,13 +7,18 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/config/axios";
 import { CoachRoomListView, RoleSelectionView } from "./selection-view";
 import ChatRoom from "./chat-room";
-import { Room } from "@/types/chat";
+import { Message, Room } from "@/types/chat";
+import useStudioSessionStore from "@/store/useStudioSessionStore";
+import useChatSession from "@/hooks/useChatSession";
 
 export const ChatPopover = () => {
 
+  const { setRole: setSessionRole, setInSession } = useStudioSessionStore();
+
   const [isOpen, setIsOpen] = useState(false);
   const [role, setRole] = useState<SessionRole>(null);
-  const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<string>("");
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const { data: rooms } = useQuery({
     queryKey: ["rooms"],
@@ -23,15 +28,24 @@ export const ChatPopover = () => {
     },
   })
 
+  const { sendMessage } = useChatSession({
+    session: {
+      sessionId: selectedRoom,
+      role: role,
+    },
+    setChatMessages: setMessages,
+  })
+
   console.log("Rooms data:", rooms);
 
   const handleBack = () => {
     if (role === SessionRole.COACH) {
-      setSelectedRoom(null);
+      setSessionRole(SessionRole.LEARNER);
     } else {
       setRole(null);
-      setSelectedRoom(null);
     }
+    setSelectedRoom("");
+    setInSession(false);
   };
 
   const currentRoom = rooms?.find((r) => r.room_id === selectedRoom);
@@ -48,7 +62,7 @@ export const ChatPopover = () => {
           />
         )
     };
-    if (role === SessionRole.COACH && selectedRoom === null) {
+    if (role === SessionRole.COACH && selectedRoom === "") {
       return (
         <CoachRoomListView 
           rooms={rooms || []} 
@@ -63,6 +77,8 @@ export const ChatPopover = () => {
         selectedRoom={selectedRoom}
         hasCoach={hasCoach}
         handleBack={handleBack}
+        messages={messages}
+        sendMessage={sendMessage}
       />
     );
   };

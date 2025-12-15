@@ -4,14 +4,17 @@ import { SessionRole } from "@/types/session.d";
 import { ScrollArea } from "../ui/scroll-area";
 import { Input } from "../ui/input";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import useSocketSession from "@/hooks/useSocketSession";
+import useChatSession from "@/hooks/useChatSession";
 import { Message } from "@/types/chat";
 import { useQueryClient } from "@tanstack/react-query";
+import useLearnersValuesSession from "@/hooks/useLearnersValuesSession";
 
 type Props = {
   role: SessionRole;
   selectedRoom: string;
   hasCoach: boolean;
+  messages: Message[];
+  sendMessage: (message: Message) => void
   handleBack: () => void;
 }
 
@@ -23,20 +26,14 @@ const ChatRoom = (props: Props) => {
     role, 
     selectedRoom, 
     hasCoach, 
-    handleBack, 
+    handleBack,
+    messages,
+    sendMessage
   } = props;
   
   const [inputValue, setInputValue] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { sendMessage } = useSocketSession({
-    session: {
-      sessionId: selectedRoom.toString(),
-      role: role,
-    },
-    setChatMessages: setMessages,
-  })
 
   useEffect(() => {
     if (scrollRef.current) {

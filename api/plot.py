@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 SR = 44100
 
 # Load audio
-before, sr = librosa.load("uploads/raw/kenny/2025-12-14-15h44m41s.wav", sr=SR, mono=True)
-after, _ = librosa.load("autotuned.wav", sr=SR, mono=True)
+before, sr = librosa.load("uploads/raw/kenny/2025-12-15-11h51m23s.wav", sr=SR, mono=True)
+after, _ = librosa.load("uploads/processed/kenny/2025-12-15-11h51m27s.wav", sr=SR, mono=True)
 
 # Pitch tracking
 f0_before = librosa.yin(before, fmin=80, fmax=1000, sr=sr)

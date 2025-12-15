@@ -5,7 +5,14 @@ import { Toaster } from "./components/ui/sonner";
 import Studio from "./pages/studio";
 import Layout from "./components/layout";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 60 * 1000,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

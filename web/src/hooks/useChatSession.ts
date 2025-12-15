@@ -7,13 +7,15 @@ type Props = {
   setChatMessages: React.Dispatch<React.SetStateAction<Message[]>>;
 }
 
-const useSocketSession = (props: Props) => {
+const useChatSession = (props: Props) => {
   const socketRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   const BASE_URL = "ws://localhost:8000/api/studio";
 
   useEffect(() => {
+    if(props.session.sessionId === "") return;
+
     const rt_url = `${BASE_URL}/ws/${props.session.sessionId}/${props.session.role}`;
     console.log("Connecting to WebSocket:", rt_url);
     
@@ -69,4 +71,4 @@ const useSocketSession = (props: Props) => {
   return { sendMessage, isConnected };
 };
 
-export default useSocketSession;
+export default useChatSession;

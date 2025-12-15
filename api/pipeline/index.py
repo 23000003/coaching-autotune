@@ -1,4 +1,5 @@
 from typing import Tuple
+import librosa
 import numpy as np
 from models.audio_model import AudioConfig
 from utils.wav_bytes_converter import convert_to_wav_bytes
@@ -61,14 +62,32 @@ def start_dsp_pipeline(
         tuned_audio = psola.vocode(audio, sample_rate=int(sr), target_pitch=audio_f0, fmin=FMIN, fmax=FMAX);
         logger.info("PSOLA vocoding done")
         
+        
         # ------------------------------
-        # 5) Audio FX
+        # 5) Pitch Shifting
+        # ------------------------------
+        tuned_audio = librosa.effects.pitch_shift(
+            audio,
+            sr=sr,
+            n_steps=values.pitch_shift
+        )
+        
+        # ------------------------------
+        # 6) Audio FX
         # ------------------------------
         if values.fx_enabled:
             tuned_audio = apply_audio_fx(values, tuned_audio, sr)
+            
+            
+        # 7) Increase volume slightly to avoid very low output
+        # ------------------------------
+        peak = np.max(np.abs(tuned_audio))
+        if peak > 0:
+            tuned_audio = tuned_audio / peak * 0.95
+        
         
         # ------------------------------
-        # 6) Convert to WAV bytes
+        # 8) Convert to WAV bytes
         # ------------------------------
         wav_bytes = convert_to_wav_bytes(tuned_audio, sr)
 

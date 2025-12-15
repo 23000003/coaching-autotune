@@ -1,8 +1,8 @@
 import { AudioService } from "@/services/audio.service";
 import { ApiResponse } from "@/types/api-response";
-import { AudioFile, UploadAudio } from "@/types/audio-config";
+import { AudioConfig, AudioFile, UploadAudio } from "@/types/audio-config";
 import { toastr } from "@/utils/toast";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { startTransition } from "react";
 
@@ -11,10 +11,11 @@ export const useGetAllAudioFiles = (username: string) => {
   return useQuery<AudioFile[]>({
     queryKey: ["user-audio-files", username],
     queryFn: () => AudioService.getAllUserAudioFiles(username),
+    placeholderData: keepPreviousData
   });
 }
 
-export const useUploadAudioFile = (username: string) => {
+export const useUploadAudioFile = (username: string, sendConfigValues: (values: AudioConfig) => void) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["upload-audio-file"],
@@ -26,6 +27,7 @@ export const useUploadAudioFile = (username: string) => {
       startTransition(() => {
         queryClient.invalidateQueries({ queryKey: ["user-audio-files", username] });
       });
+      sendConfigValues({ invalidate: "invalidate" } as unknown as AudioConfig);
     },
     onError: (error: AxiosError<ApiResponse>) => {
       console.error("Error uploading audio file:", error);

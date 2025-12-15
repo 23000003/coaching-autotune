@@ -32,19 +32,28 @@ def degrees_from(scale: str):
 
 def closest_pitch_from_scale(f0, scale):
     """Return the pitch closest to f0 that belongs to the given scale"""
+    
     if np.isnan(f0):
         return np.nan
+    
     degrees = degrees_from(scale)
+    
     midi_note = librosa.hz_to_midi(f0)
+    
     degree = midi_note % SEMITONES_IN_OCTAVE
+    
     degree_id = np.argmin(np.abs(degrees - degree))
+    
     degree_difference = degree - degrees[degree_id]
+    
     midi_note -= degree_difference
+    
     return librosa.midi_to_hz(midi_note)
 
 def aclosest_pitch_from_scale(f0, scale):
     """Map each pitch in the f0 array to the closest pitch belonging to the given scale,
        with retune speed and humanization applied"""
+       
     sanitized_pitch = np.zeros_like(f0)
     prev_pitch = np.nan
 

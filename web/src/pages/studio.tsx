@@ -8,11 +8,20 @@ import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { AudioConfig, UploadAudio } from "@/types/audio-config";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import useStudioSessionStore from "@/store/useStudioSessionStore";
+import { SessionRole } from "@/types/session.d";
+import useLearnersValuesSession from "@/hooks/useLearnersValuesSession";
 
 const Studio = () => {
   
+  const { 
+    role, 
+    studioName: name, 
+    inSession
+  } = useStudioSessionStore();
+
   const [audioConfig, setAudioConfig] = useState<AudioConfig>({
     // Autotune
     retune_speed: 0.15,    // slow/natural retune
@@ -29,29 +38,46 @@ const Studio = () => {
     delay: 0.2,            // short echo
   });
 
+  const { sendConfigValues } = useLearnersValuesSession({
+    session: {
+      sessionId: name,
+      role: role,
+    },
+    inSession: inSession,
+    setAudioConfig: setAudioConfig,
+  });
+
+  useEffect(() => {
+    if (inSession && role === SessionRole.LEARNER) {
+      sendConfigValues(audioConfig);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioConfig, inSession]);
+
   const { 
     data: userAudioFiles, 
-    isLoading, 
+    isLoading,
     isError 
-  } = useGetAllAudioFiles("kenny");
+  } = useGetAllAudioFiles(name);
 
   const { 
     mutate: uploadAudioFile,
     isPending: isUploading
-  } = useUploadAudioFile("kenny");
+  } = useUploadAudioFile(name, sendConfigValues);
 
-  const handleUpload = (wavBlob: Blob) => {
+  const handleUpload = useCallback((wavBlob: Blob) => {
     uploadAudioFile({
       file: wavBlob,
-      username: "kenny",
+      username: name,
       ...audioConfig
     });
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioConfig]);
 
   const recorder = useAudioRecorder(handleUpload);
   const player = useAudioPlayer();
 
-  if (isLoading || isError) {
+  if (isLoading || isError && role === SessionRole.LEARNER) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <motion.div
@@ -80,9 +106,14 @@ const Studio = () => {
             Audio Studio
           </h1>
           <p className="text-muted-foreground">
-            Professional audio recording with real-time pitch correction
+            Try our basic audio recording and playback features with autotune and effects!
           </p>
         </motion.div>
+        {role === SessionRole.COACH && (
+          <p className="text-muted-foreground text-center text-[16px]">
+            You are coaching at room <strong>{name}</strong>
+          </p>
+        )}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -112,6 +143,7 @@ const Studio = () => {
               onTogglePause={recorder.togglePause}
               onResetRecording={recorder.resetRecording}
               isUploading={isUploading}
+              role={role}
             />
           )}
         </motion.div>
@@ -134,6 +166,7 @@ const Studio = () => {
           <AudioControls 
             audioConfig={audioConfig}
             setAudioConfig={setAudioConfig}
+            isCoach={role === SessionRole.COACH}
           />
         </motion.div>
       </div>

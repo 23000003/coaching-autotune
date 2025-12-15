@@ -1,6 +1,6 @@
 from models.audio_model import AudioConfig
 import numpy as np
-from pedalboard import Pedalboard, HighShelfFilter, Compressor, Chorus, Reverb, Delay
+from pedalboard import Pedalboard, HighShelfFilter, Compressor, Chorus, Reverb, Delay, Limiter
 
 
 def apply_audio_fx(config: AudioConfig, audio: np.ndarray, sr: int) -> np.ndarray:
@@ -20,6 +20,8 @@ def apply_audio_fx(config: AudioConfig, audio: np.ndarray, sr: int) -> np.ndarra
         Chorus(rate_hz=1.5, depth=0.7, mix=config.chorus),
         Reverb(room_size=0.1, wet_level=config.reverb),
         Delay(delay_seconds=0.1, feedback=0.25, mix=config.delay),
+
+        Limiter(threshold_db=-1.0)
     ])
     
     return board(audio, sr)

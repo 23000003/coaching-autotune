@@ -4,6 +4,7 @@ import { ArrowLeft, Users } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 import { SetStateAction } from "react";
 import { Room } from "@/types/chat";
+import useStudioSessionStore from "@/store/useStudioSessionStore";
 
 type RoleSelectionViewProps = {
   setRole: React.Dispatch<React.SetStateAction<SessionRole | null>>;
@@ -12,7 +13,7 @@ type RoleSelectionViewProps = {
 
 export const RoleSelectionView = ({ setRole, setSelectedRoom }: RoleSelectionViewProps) => {
   
-  const uuid : string = crypto.randomUUID();
+  const { studioName, setInSession } = useStudioSessionStore();
 
   return (
     <div className="flex flex-col items-center justify-center h-full gap-4 p-6">
@@ -20,7 +21,8 @@ export const RoleSelectionView = ({ setRole, setSelectedRoom }: RoleSelectionVie
       <Button
         onClick={() => {
           setRole(SessionRole.LEARNER);
-          setSelectedRoom(uuid); // Auto-join room 1 as learner
+          setSelectedRoom(studioName); 
+          setInSession(true);
         }}
         className="w-full h-12 text-base"
         variant="default"
@@ -46,6 +48,7 @@ type CoachRoomListViewProps = {
 
   
 export const CoachRoomListView = ({ rooms, handleBack, setSelectedRoom }: CoachRoomListViewProps) => {
+  
   return (
     <div className="flex flex-col h-full">
       <div className="p-4 border-b border-border flex items-center gap-3">
@@ -62,7 +65,14 @@ export const CoachRoomListView = ({ rooms, handleBack, setSelectedRoom }: CoachR
           {rooms.filter(r => !r.has_coach).map((room) => (
             <button
               key={room.room_id}
-              onClick={() => setSelectedRoom(room.room_id)}
+              onClick={() => {
+                setSelectedRoom(room.room_id);
+                useStudioSessionStore.setState({
+                  role: SessionRole.COACH,
+                  studioName: room.room_id,
+                  inSession: true,
+                });
+              }}
               className="w-full p-4 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors text-left flex items-center gap-3"
             >
               <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
